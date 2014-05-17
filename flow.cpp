@@ -12,14 +12,15 @@ int func=3;
 int start=0;
 int num=4;
 int i, j;
+int ticks=0;
 
 int main( int argc, char** argv ){
-  int ontime[2]={0, 0};
+  int onvol[2]={0, 0};
   //solenoid time in seconds
   for (j=0; j<2; j++){
     for (i=0; argv[j+1][i] != '\0'; i++) {
-      ontime[j] *= 10;
-      ontime[j] += argv[j+1][i] - '0';
+      onvol[j] *= 10;
+      onvol[j] += argv[j+1][i] - '0';
     };
   };
   if (!bcm2835_init())
@@ -33,27 +34,33 @@ int main( int argc, char** argv ){
   bcm2835_gpio_fsel(PIN0, BCM2835_GPIO_FSEL_OUTP);
   bcm2835_gpio_write(PIN0, HIGH);
   cout<<"Solenoid 1"<<std::endl;
-
-  bcm2835_delay(1000*ontime[0]);  
-  bcm2835_gpio_write(PIN0, LOW);
-  
-  bcm2835_gpio_fsel(PIN1, BCM2835_GPIO_FSEL_OUTP);
-  bcm2835_gpio_write(PIN1, HIGH);
-  cout<<"Solenoid 2"<<std::endl;
-
-  bcm2835_delay(1000*ontime[1]);  
-  bcm2835_gpio_write(PIN1, LOW);
-  while (1)
+  while (ticks<=onvol[1])
     {
       if (bcm2835_gpio_eds(PIN2))
 	{
 	  // Now clear the eds flag by setting it to 1
 	  bcm2835_gpio_set_eds(PIN2);
 	  cout<<"2.06 ml"<<std::endl;
+	  ticks++;
 	}
-      // wait a bit
-      //delay(1);
     }
+  bcm2835_gpio_write(PIN0, LOW);
+  
+  bcm2835_gpio_fsel(PIN1, BCM2835_GPIO_FSEL_OUTP);
+  bcm2835_gpio_write(PIN1, HIGH);
+  cout<<"Solenoid 2"<<std::endl;
+  while (ticks<=onvol[2])
+    {
+      if (bcm2835_gpio_eds(PIN2))
+	{
+	  // Now clear the eds flag by setting it to 1
+	  bcm2835_gpio_set_eds(PIN2);
+	  cout<<"2.06 ml"<<std::endl;
+	  ticks++;
+	}
+    }
+  bcm2835_gpio_write(PIN1, LOW);
+
   bcm2835_close();
   return 0;
 
