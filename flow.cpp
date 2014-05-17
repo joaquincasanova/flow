@@ -35,13 +35,13 @@ int main( int argc, char** argv ){
   bcm2835_gpio_write(PIN0, HIGH);
   ticks=0;
   cout<<"Solenoid 1"<<std::endl;
-  while (ticks<=onvol[1]*100)
+  while (ticks<=onvol[0]*100)
     {
       if (bcm2835_gpio_eds(PIN2))
 	{
 	  // Now clear the eds flag by setting it to 1
 	  bcm2835_gpio_set_eds(PIN2);
-	  cout<<"2.06 ml"<<std::endl;
+	  cout<<ticks<<std::endl;
 	  ticks+=206;
 	}
     }
@@ -51,13 +51,13 @@ int main( int argc, char** argv ){
   bcm2835_gpio_write(PIN1, HIGH);
   ticks=0;
   cout<<"Solenoid 2"<<std::endl;
-  while (ticks<=onvol[2]*100)
+  while (ticks<=onvol[1]*100)
     {
       if (bcm2835_gpio_eds(PIN2))
 	{
 	  // Now clear the eds flag by setting it to 1
 	  bcm2835_gpio_set_eds(PIN2);
-	  cout<<"2.06 ml"<<std::endl;
+	  cout<<ticks<<std::endl;
 	  ticks+=206;
 	}
     }
